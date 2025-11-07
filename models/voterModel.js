@@ -17,6 +17,16 @@ const voterSchema = new mongoose.Schema(
       required: [true, "Student ID is required."],
       unique: true,
     },
+    department: { 
+      type: String, 
+      default: 'General', 
+      trim: true 
+    },
+    course: { 
+      type: String, 
+      default: 'N/A', 
+      trim: true 
+    },
     password: {
       type: String,
       required: [true, "Password is required."],
@@ -33,7 +43,14 @@ const voterSchema = new mongoose.Schema(
       },
     ],
   },
-  { versionKey: false }
+  { timestamps: true, versionKey: false }
 );
+
+// Hide password when converting to JSON
+    voterSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    delete obj.password;
+    return obj;
+};
 
 module.exports = mongoose.model("Voter", voterSchema);

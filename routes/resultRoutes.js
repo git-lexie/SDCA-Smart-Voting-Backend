@@ -8,4 +8,8 @@ router.get("/:electionId", getElectionResults);
 // Get summary of all elections (admin)
 router.get("/", getAllElectionSummaries);
 
+const { voteCandidate, getLiveElectionStats } = require('../controllers/resultController');
+const { protect } = require('../middleware/authMiddleware');
+
+
 module.exports = router;

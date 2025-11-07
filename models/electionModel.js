@@ -11,6 +11,10 @@ const electionSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    bannerUrl: { 
+      type: String, 
+      default: '' 
+    },
     startDate: {
       type: Date,
       required: true,
@@ -19,30 +23,41 @@ const electionSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    candidates: [
+    status: { 
+      type: String, 
+      enum: ['upcoming', 'ongoing', 'ended'], 
+      default: 'upcoming' 
+    },
+    candidates: 
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Candidate",
       },
-    ],
-    eligibleVoters: [
+    
+    eligibleVoters: 
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Voter",
       },
-    ],
-    votes: [
+    
+    votes: 
       {
         voterId: { type: mongoose.Schema.Types.ObjectId, ref: "Voter" },
         candidateId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate" },
       },
-    ],
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  { versionKey: false }
-);
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Voter', required: true },
+    }, { timestamps: true, versionKey: false });
+
+// Optional: Auto-update status based on dates
+    electionSchema.pre('save', function(next) {
+    const now = new Date();
+    if (now < this.startDate) this.status = 'upcoming';
+    else if (now >= this.startDate && now <= this.endDate) this.status = 'ongoing';
+    else this.status = 'ended';
+    next();
+});
+    
+  
+
 
 module.exports = mongoose.model("Election", electionSchema);

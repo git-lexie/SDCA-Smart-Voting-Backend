@@ -16,6 +16,10 @@ const candidateSchema = new mongoose.Schema(
       ref: "Election",
       required: true,
     },
+    votes: { 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Voter' 
+    },
     votesCount: {
       type: Number,
       default: 0,
@@ -24,8 +28,18 @@ const candidateSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    motto: {
+       type: String, 
+       default: '', 
+       trim: true 
+    },
   },
-  { versionKey: false }
-);
+  { timestamps: true, versionKey: false });
+
+  // Ensure votesCount is always updated automatically
+  candidateSchema.pre('save', function(next) {
+  this.votesCount = this.votes ? this.votes.length : 0;
+  next();
+  });
 
 module.exports = mongoose.model("Candidate", candidateSchema);

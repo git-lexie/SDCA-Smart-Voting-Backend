@@ -16,6 +16,18 @@ const eligibleVoterSchema = new mongoose.Schema({
     type: String,
     required: false, // Optional, if you have names in your voter list
   },
-});
+  department: { 
+    type: String, 
+    default: 'General', 
+    trim: true 
+  },
+  course: { 
+    type: String, 
+    default: 'N/A', 
+    trim: true 
+  },
+  }, 
+  { timestamps: true, versionKey: false });
+
 
 module.exports = mongoose.model("EligibleVoter", eligibleVoterSchema);
