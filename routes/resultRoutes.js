@@ -1,15 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { getElectionResults, getAllElectionSummaries } = require("../controllers/resultController");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-// Get detailed results for a single election
-router.get("/:electionId", getElectionResults);
+// Detailed results for a single election
+router.get("/:electionId", protect, getElectionResults);
 
-// Get summary of all elections (admin)
-router.get("/", getAllElectionSummaries);
-
-const { voteCandidate, getLiveElectionStats } = require('../controllers/resultController');
-const { protect } = require('../middleware/authMiddleware');
-
+// Admin: Summary of all elections
+router.get("/", protect, adminOnly, getAllElectionSummaries);
 
 module.exports = router;

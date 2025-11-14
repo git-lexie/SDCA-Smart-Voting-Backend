@@ -1,8 +1,8 @@
 const Election = require('../models/election.model');
 const EligibleVoter = require('../models/eligibleVoter.model');
-const Candidate = require('../models/candidate.model');
+const Candidate = require('../models/candidatesModel');
 const csv = require('csv-parser');
-const HttpError = require('../models/ErrorModel');
+const HttpError = require('../models/errorModel');
 const sendEmail = require('../utils/sendEmail');
 const { bucket } = require('../utils/firebaseAdmin');
 const stream = require('stream');

@@ -1,14 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const {
-  getElectionResults,
-  getChartData,
-} = require("../controllers/dashboard.controller");
+const { getElectionResults, getChartData } = require("../controllers/dashboardController");
+const { protect } = require("../middleware/authMiddleware");
 
-// Results page per election
-router.get("/results", getElectionResults);
+// Dashboard results overview
+router.get("/results", protect, getElectionResults);
 
-// Chart data: participation vs eligible voters
-router.get("/charts", getChartData);
+// Chart data for participation
+router.get("/charts", protect, getChartData);
 
 module.exports = router;

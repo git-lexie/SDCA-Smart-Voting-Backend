@@ -1,19 +1,11 @@
 const notFound = (req, res, next) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
   res.status(404);
-  next(error);
+  next(new Error(`Not Found - ${req.originalUrl}`));
 };
 
-const errorHandler = (error, req, res, next) => {
-  // If response was already sent, delegate to Express's default handler
-  if (res.headersSent) {
-    return next(error);
-  }
-
-  // Default to 500 Internal Server Error
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({
-    message: error.message || "An unknown error occurred.",
+const errorHandler = (err, req, res, next) => {
+  res.status(err.statusCode || 500).json({
+    message: err.message || "Internal Server Error",
   });
 };
 

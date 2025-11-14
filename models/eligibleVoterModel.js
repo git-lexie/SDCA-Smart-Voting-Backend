@@ -1,33 +1,11 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const eligibleVoterSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    lowercase: true,
-    trim: true,
-  },
-  studentID: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  fullName: {
-    type: String,
-    required: false, // Optional, if you have names in your voter list
-  },
-  department: { 
-    type: String, 
-    default: 'General', 
-    trim: true 
-  },
-  course: { 
-    type: String, 
-    default: 'N/A', 
-    trim: true 
-  },
-  }, 
-  { timestamps: true, versionKey: false });
+const eligibleVoterSchema = new Schema({
+  email: { type: String, required: true, lowercase: true },
+  studentID: { type: String, default: "" },
+  fullName: { type: String, default: "" },
+  department: { type: String, default: "General" },
+  course: { type: String, default: "N/A" },
+}, { timestamps: true });
 
-
-module.exports = mongoose.model("EligibleVoter", eligibleVoterSchema);
+module.exports = model("EligibleVoter", eligibleVoterSchema);
