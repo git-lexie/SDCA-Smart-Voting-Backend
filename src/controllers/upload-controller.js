@@ -1,6 +1,6 @@
 const csv = require("csv-parser");
-const HttpError = require("../models/errorModel");
-const EligibleVoter = require("../models/eligibleVoterModel");
+const HttpError = require("../models/error-model");
+const EligibleVoter = require("../models/eligible-voter-model");
 const stream = require("stream");
 
 exports.uploadEligibleCsv = async (req, res, next) => {

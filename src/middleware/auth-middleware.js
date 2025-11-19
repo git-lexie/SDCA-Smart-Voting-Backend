@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const Voter = require("../models/voterModel");
-const HttpError = require("../models/errorModel");
+const Voter = require("../models/voter-model");
+const HttpError = require("../models/error-model");
 
 exports.protect = async (req, res, next) => {
   try {
