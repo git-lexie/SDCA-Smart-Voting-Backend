@@ -1,41 +1,78 @@
+const mongoose = require("mongoose");
 const Candidate = require("../models/candidate-model");
 const Election = require("../models/election-model");
-const Voter = require("../models/voter-model");
 const HttpError = require("../models/error-model");
+const cloudinary = require("../utils/cloudinary");
 
-// Add candidate (Admin)
+// Add candidate (Admin only)
 exports.addCandidate = async (req, res, next) => {
   try {
-    const { fullName, position, electionId, imageUrl, motto } = req.body;
-    if (!fullName || !position || !electionId)
-      return next(new HttpError("Fill required fields", 422));
+    console.log("🔥 BODY:", req.body);
+    console.log("🔥 FILE:", req.file);
+
+    const { fullName, position, electionId, motto } = req.body;
+
+    if (!fullName || !position || !electionId) {
+      return next(new HttpError("Missing required fields", 422));
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(electionId)) {
+      return next(new HttpError("Invalid election ID format", 422));
+    }
 
     const election = await Election.findById(electionId);
     if (!election) return next(new HttpError("Election not found", 404));
-    if (new Date() >= election.startDate) return next(new HttpError("Cannot add after election started", 403));
 
-    const candidate = await Candidate.create({
-      fullName,
-      position,
+    let imageUrl = "";
+
+    // Upload image to Cloudinary if file exists
+    if (req.file) {
+      imageUrl = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "sdca_candidates" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result.secure_url);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+    }
+
+    const data = {
+      fullName: String(fullName).trim(),
+      position: String(position).trim(),
       electionId,
-      imageUrl: imageUrl || "",
       motto: motto || "",
-    });
+      imageUrl,
+    };
 
-    res.status(201).json({ success: true, candidate });
+    const candidate = await Candidate.create(data);
+
+    // Link candidate to election
+    election.candidates.push(candidate._id);
+    await election.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Candidate created successfully",
+      candidate,
+    });
   } catch (err) {
-    next(new HttpError("Failed to add candidate", 500));
+    console.error("🔥 ERROR IN ADD CANDIDATE:", err);
+    return next(new HttpError("Add candidate failed", 500));
   }
 };
 
-// Get candidate
+// Get single candidate
 exports.getCandidate = async (req, res, next) => {
   try {
     const candidate = await Candidate.findById(req.params.id);
     if (!candidate) return next(new HttpError("Candidate not found", 404));
-    res.json(candidate);
+    res.status(200).json({ success: true, candidate });
   } catch (err) {
-    next(new HttpError("Failed to get candidate", 500));
+    console.error("🔥 GET CANDIDATE ERROR:", err);
+    next(new HttpError("Failed to fetch candidate", 500));
   }
 };
 
@@ -44,47 +81,58 @@ exports.removeCandidate = async (req, res, next) => {
   try {
     const candidate = await Candidate.findById(req.params.id);
     if (!candidate) return next(new HttpError("Candidate not found", 404));
-
-    const election = await Election.findById(candidate.electionId);
-    if (!election) return next(new HttpError("Election not found", 404));
-    if (new Date() >= election.startDate) return next(new HttpError("Cannot delete after start", 403));
-
-    await candidate.remove();
-    res.json({ success: true, message: "Candidate removed" });
+    await candidate.deleteOne();
+    res.status(200).json({ success: true, message: "Candidate removed" });
   } catch (err) {
+    console.error("🔥 REMOVE CANDIDATE ERROR:", err);
     next(new HttpError("Failed to remove candidate", 500));
   }
 };
 
-// Vote for candidate
-exports.voteCandidate = async (req, res, next) => {
+// Disallow direct voting here
+exports.voteCandidate = (req, res, next) => {
+  return next(new HttpError("Use /votes endpoint to cast vote", 400));
+};
+
+// ================================
+// UPDATE CANDIDATE (Admin only)
+// ================================
+exports.updateCandidate = async (req, res, next) => {
   try {
+    const { fullName, position, motto } = req.body;
     const candidate = await Candidate.findById(req.params.id);
+
     if (!candidate) return next(new HttpError("Candidate not found", 404));
 
-    const election = await Election.findById(candidate.electionId).populate("eligibleVoters");
-    if (!election) return next(new HttpError("Election not found", 404));
+    // Update basic fields
+    if (fullName) candidate.fullName = String(fullName).trim();
+    if (position) candidate.position = String(position).trim();
+    if (motto) candidate.motto = String(motto).trim();
 
-    const now = new Date();
-    if (now < election.startDate || now > election.endDate)
-      return next(new HttpError("Election not active", 403));
+    // Update image if file is provided
+    if (req.file) {
+      const imageUrl = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "sdca_candidates" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result.secure_url);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      candidate.imageUrl = imageUrl;
+    }
 
-    const voter = req.user;
-    const isEligible = election.eligibleVoters.some(v => v._id.toString() === voter._id.toString());
-    if (!isEligible) return next(new HttpError("You are not eligible", 403));
-
-    const alreadyVoted = voter.votedElections?.some(v => v.electionId.toString() === election._id.toString());
-    if (alreadyVoted) return next(new HttpError("Already voted", 403));
-
-    candidate.votesCount += 1;
-    candidate.votes.push(voter._id);
     await candidate.save();
 
-    voter.votedElections.push({ electionId: election._id, candidateId: candidate._id });
-    await voter.save();
-
-    res.json({ success: true, message: "Vote recorded" });
+    return res.status(200).json({
+      success: true,
+      message: "Candidate updated successfully",
+      candidate,
+    });
   } catch (err) {
-    next(new HttpError("Failed to vote", 500));
+    console.error("🔥 UPDATE CANDIDATE ERROR:", err);
+    return next(new HttpError("Update candidate failed", 500));
   }
 };

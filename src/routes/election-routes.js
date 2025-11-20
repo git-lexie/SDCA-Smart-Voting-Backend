@@ -10,8 +10,9 @@ const {
   updateElection,
   removeElection,
   getCandidatesElection,
-  getElectionVoters,
+  getElectionVoters
 } = require("../controllers/election-controller");
+
 const { protect, adminOnly } = require("../middleware/auth-middleware");
 
 // Election routes

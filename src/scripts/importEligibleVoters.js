@@ -1,6 +1,6 @@
 const csv = require("csv-parser");
 const fs = require("fs");
-const EligibleVoter = require("../models/eligibleVoterModel");
+const EligibleVoter = require("../models/eligible-voter-model");
 
 const importCSV = (filePath) => {
   return new Promise((resolve, reject) => {
@@ -10,7 +10,7 @@ const importCSV = (filePath) => {
       .on("data", (row) => {
         voters.push({
           email: row.email.toLowerCase().trim(),
-          studentID: row.studentID.trim(),
+          studentID: row.studentID?.trim() || "",
           fullName: row.fullName?.trim() || "",
           department: row.department?.trim() || "General",
           course: row.course?.trim() || "N/A",

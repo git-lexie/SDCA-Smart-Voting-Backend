@@ -11,10 +11,8 @@ const electionSchema = new mongoose.Schema(
     candidates: [{ type: mongoose.Schema.Types.ObjectId, ref: "Candidate" }],
     eligibleVoters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Voter" }],
     votes: [
-      {
-        voterId: { type: mongoose.Schema.Types.ObjectId, ref: "Voter" },
-        candidateId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate" },
-      },
+      { voterId: { type: mongoose.Schema.Types.ObjectId, ref: "Voter" },
+        candidateId: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate" } },
     ],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Voter", required: true },
   },

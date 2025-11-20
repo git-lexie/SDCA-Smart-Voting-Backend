@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const { castVote, getRealtimeVotes, getElectionSummary } = require("../controllers/vote-controller");
 const { protect } = require("../middleware/auth-middleware");
-const { castVote, realtimeVotes, finalSummary } = require("../controllers/vote-controller");
 
-// Cast vote
+// Vote routes
 router.post("/", protect, castVote);
-
-// Realtime results
-router.get("/:electionId/realtime", protect, realtimeVotes);
-
-// Final summary
-router.get("/:electionId/final", protect, finalSummary);
+router.get("/:electionId/realtime", protect, getRealtimeVotes);
+router.get("/:electionId/summary", protect, getElectionSummary);
 
 module.exports = router;

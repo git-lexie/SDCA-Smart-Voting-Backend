@@ -3,7 +3,7 @@ const router = express.Router();
 const { getElectionResults, getChartData } = require("../controllers/dashboard-controller");
 const { protect } = require("../middleware/auth-middleware");
 
-// Dashboard results
+// Dashboard routes
 router.get("/results", protect, getElectionResults);
 router.get("/charts", protect, getChartData);
 

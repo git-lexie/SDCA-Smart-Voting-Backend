@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { registerVoter, loginVoter, getVoter, updateVoter, deleteVoter } = require("../controllers/voter-controller");
+const {
+  registerVoter,
+  loginVoter,
+  getVoter,
+  updateVoter,
+  deleteVoter
+} = require("../controllers/voter-controller");
 const { protect } = require("../middleware/auth-middleware");
 
 // Voter routes

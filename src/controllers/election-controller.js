@@ -3,6 +3,10 @@ const Candidate = require("../models/candidate-model");
 const EligibleVoter = require("../models/eligible-voter-model");
 const HttpError = require("../models/error-model");
 const cloudinary = require("../utils/cloudinary");
+
+const EligibleVoter = require("../models/eligible-voter-model");
+const sendEmail = require("../utils/sendEmail");
+
 const path = require("path");
 const fs = require("fs");
 
@@ -12,8 +16,7 @@ exports.createElection = async (req, res, next) => {
     if (!req.user.isAdmin) return next(new HttpError("Admin only", 403));
 
     const { title, description, startDate, endDate } = req.body;
-    if (!title || !startDate || !endDate)
-      return next(new HttpError("Missing required fields", 422));
+    if (!title || !startDate || !endDate) return next(new HttpError("Missing required fields", 422));
 
     const data = {
       title,
@@ -26,7 +29,6 @@ exports.createElection = async (req, res, next) => {
     if (req.file) {
       const tempPath = path.join(__dirname, "..", "uploads", req.file.originalname);
       fs.writeFileSync(tempPath, req.file.buffer);
-
       const result = await cloudinary.uploader.upload(tempPath, { resource_type: "image" });
       fs.unlinkSync(tempPath);
 
@@ -58,9 +60,7 @@ exports.getElections = async (req, res, next) => {
 // Get single election
 exports.getElection = async (req, res, next) => {
   try {
-    const election = await Election.findById(req.params.id)
-      .populate("candidates")
-      .populate("eligibleVoters");
+    const election = await Election.findById(req.params.id).populate("candidates eligibleVoters");
     if (!election) return next(new HttpError("Election not found", 404));
     res.json(election);
   } catch (err) {
@@ -85,11 +85,9 @@ exports.updateElection = async (req, res, next) => {
     if (req.file) {
       const tempPath = path.join(__dirname, "..", "uploads", req.file.originalname);
       fs.writeFileSync(tempPath, req.file.buffer);
-
       const result = await cloudinary.uploader.upload(tempPath, { resource_type: "image" });
       fs.unlinkSync(tempPath);
       if (!result.secure_url) return next(new HttpError("Banner upload failed", 422));
-
       election.bannerUrl = result.secure_url;
     }
 
@@ -136,3 +134,5 @@ exports.getElectionVoters = async (req, res, next) => {
     next(new HttpError("Failed to fetch voters", 500));
   }
 };
+
+

@@ -1,7 +1,7 @@
 const Election = require("../models/election-model");
 const HttpError = require("../models/error-model");
 
-// Detailed results for a single election
+// Single election detailed results
 exports.getElectionResults = async (req, res, next) => {
   try {
     const election = await Election.findById(req.params.electionId)
@@ -13,7 +13,6 @@ exports.getElectionResults = async (req, res, next) => {
     const totalEligible = election.eligibleVoters.length;
     const totalVotes = election.candidates.reduce((acc, c) => acc + c.votesCount, 0);
 
-    // Department/Course breakdown
     const deptBreakdown = {};
     const courseBreakdown = {};
     election.eligibleVoters.forEach(v => {

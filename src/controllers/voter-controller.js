@@ -4,17 +4,17 @@ const Voter = require("../models/voter-model");
 const HttpError = require("../models/error-model");
 
 // Generate JWT
-const generateToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
-};
+const generateToken = (payload) =>
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
 // Register voter
 exports.registerVoter = async (req, res, next) => {
   try {
+    console.log("Register body:", req.body);
+
     const { fullName, email, studentID, password, password2 } = req.body;
     if (!fullName || !email || !password || !password2)
       return next(new HttpError("All fields are required", 422));
-
     if (password !== password2)
       return next(new HttpError("Passwords do not match", 422));
 
@@ -24,9 +24,10 @@ exports.registerVoter = async (req, res, next) => {
     if (
       !email.toLowerCase().endsWith("@gmail.com") &&
       !email.toLowerCase().endsWith("@sdca.edu.ph")
-    ) {
-      return next(new HttpError("Email must be Gmail or SDCA email", 422));
-    }
+    )
+      return next(
+        new HttpError("Email must be Gmail or SDCA email", 422)
+      );
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -38,11 +39,9 @@ exports.registerVoter = async (req, res, next) => {
       isAdmin: email.toLowerCase() === "admin@sdca.edu.ph",
     });
 
-    res.status(201).json({
-      message: "Registration successful",
-      voter: voter.toJSON(),
-    });
+    res.status(201).json({ message: "Registration successful", voter: voter.toJSON() });
   } catch (err) {
+    console.error("Registration error:", err);
     next(new HttpError("Registration failed", 500));
   }
 };
@@ -50,6 +49,8 @@ exports.registerVoter = async (req, res, next) => {
 // Login voter
 exports.loginVoter = async (req, res, next) => {
   try {
+    console.log("Login body:", req.body);
+
     const { email, password } = req.body;
     if (!email || !password)
       return next(new HttpError("All fields are required", 422));
@@ -61,8 +62,9 @@ exports.loginVoter = async (req, res, next) => {
     if (!valid) return next(new HttpError("Invalid credentials", 401));
 
     const token = generateToken({ id: voter._id, isAdmin: voter.isAdmin });
-    res.json({ message: "Login successful", token, voter: voter.toJSON() });
+    res.status(200).json({ message: "Login successful", token, voter: voter.toJSON() });
   } catch (err) {
+    console.error("Login error:", err);
     next(new HttpError("Login failed", 500));
   }
 };
@@ -78,38 +80,54 @@ exports.getVoter = async (req, res, next) => {
   }
 };
 
-// Update voter info
+// Update voter
 exports.updateVoter = async (req, res, next) => {
   try {
-    const { fullName, email, studentID, password } = req.body;
-    const voter = await Voter.findById(req.params.id);
-    if (!voter) return next(new HttpError("Voter not found", 404));
+    const voterId = req.params.id;
+    const { fullName, email, studentID, password, department, course } = req.body;
 
+    if (!voterId) return next(new HttpError("Voter ID is required", 400));
+
+    // Validate email if provided
     if (email && !email.toLowerCase().endsWith("@gmail.com") && !email.toLowerCase().endsWith("@sdca.edu.ph")) {
       return next(new HttpError("Email must be Gmail or SDCA email", 422));
     }
 
-    if (email) voter.email = email.toLowerCase();
-    if (fullName) voter.fullName = fullName;
-    if (studentID) voter.studentID = studentID;
-    if (password) voter.password = await bcrypt.hash(password, 10);
+    // Build update object dynamically
+    const updateData = {};
+    if (fullName) updateData.fullName = fullName.trim();
+    if (email) updateData.email = email.toLowerCase().trim();
+    if (studentID) updateData.studentID = studentID.trim();
+    if (department) updateData.department = department.trim();
+    if (course) updateData.course = course.trim();
+    if (password) updateData.password = await bcrypt.hash(password, 10);
 
-    await voter.save();
-    res.json({ message: "Voter updated successfully", voter: voter.toJSON() });
+    // Update and return the new document
+    const updatedVoter = await Voter.findByIdAndUpdate(voterId, updateData, { new: true });
+    if (!updatedVoter) return next(new HttpError("Voter not found", 404));
+
+    res.status(200).json({ message: "Voter updated successfully", voter: updatedVoter.toJSON() });
   } catch (err) {
+    console.error("Update voter error:", err);
     next(new HttpError("Update failed", 500));
   }
 };
 
 // Delete voter
 exports.deleteVoter = async (req, res, next) => {
+  console.log("🔥 DELETE VOTER REQ PARAMS:", req.params); // debug
+
   try {
-    const voter = await Voter.findById(req.params.id);
+    const { id } = req.params;
+    if (!id) return next(new HttpError("Voter ID missing", 400));
+
+    const voter = await Voter.findById(id);
     if (!voter) return next(new HttpError("Voter not found", 404));
 
-    await voter.remove();
-    res.json({ message: "Voter account deleted successfully" });
+    await voter.deleteOne(); // safer than remove()
+    return res.status(200).json({ message: "Voter account deleted successfully" });
   } catch (err) {
-    next(new HttpError("Deletion failed", 500));
+    console.error("🔥 Delete voter error:", err);
+    return next(new HttpError("Deletion failed", 500));
   }
 };
