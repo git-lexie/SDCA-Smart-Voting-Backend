@@ -3,9 +3,7 @@ const Candidate = require("../models/candidate-model");
 const EligibleVoter = require("../models/eligible-voter-model");
 const HttpError = require("../models/error-model");
 const cloudinary = require("../utils/cloudinary");
-
-const EligibleVoter = require("../models/eligible-voter-model");
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/send-email");
 
 const path = require("path");
 const fs = require("fs");
