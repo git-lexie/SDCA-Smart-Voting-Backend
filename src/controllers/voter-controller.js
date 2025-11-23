@@ -12,8 +12,8 @@ exports.registerVoter = async (req, res, next) => {
   try {
     console.log("Register body:", req.body);
 
-    const { fullName, email, studentID, password, password2 } = req.body;
-    if (!fullName || !email || !password || !password2)
+    const { firstName, lastName, email, studentID, password, password2 } = req.body;
+    if (!firstName || !lastName || !email || !password || !password2)
       return next(new HttpError("All fields are required", 422));
     if (password !== password2)
       return next(new HttpError("Passwords do not match", 422));
@@ -32,7 +32,8 @@ exports.registerVoter = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const voter = await Voter.create({
-      fullName,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
       email: email.toLowerCase(),
       studentID: studentID || "",
       password: hashedPassword,
@@ -59,7 +60,8 @@ exports.loginVoter = async (req, res, next) => {
     if (!voter) return next(new HttpError("Invalid credentials", 401));
 
     const valid = await bcrypt.compare(password, voter.password || "");
-    if (!valid) return next(new HttpError("Invalid credentials", 401));
+    if (!valid) 
+      return next(new HttpError("Incorrect Password", 401));
 
     const token = generateToken({ id: voter._id, isAdmin: voter.isAdmin });
     res.status(200).json({ message: "Login successful", token, voter: voter.toJSON() });
@@ -84,7 +86,7 @@ exports.getVoter = async (req, res, next) => {
 exports.updateVoter = async (req, res, next) => {
   try {
     const voterId = req.params.id;
-    const { fullName, email, studentID, password, department, course } = req.body;
+    const { firstName, lastName, email, studentID, password, department, course } = req.body;
 
     if (!voterId) return next(new HttpError("Voter ID is required", 400));
 
@@ -95,7 +97,8 @@ exports.updateVoter = async (req, res, next) => {
 
     // Build update object dynamically
     const updateData = {};
-    if (fullName) updateData.fullName = fullName.trim();
+    if (firstName) updateData.firstName = firstName.trim();
+    if (lastName) updateData.lastName = lastNameName.trim();
     if (email) updateData.email = email.toLowerCase().trim();
     if (studentID) updateData.studentID = studentID.trim();
     if (department) updateData.department = department.trim();

@@ -1,0 +1,1646 @@
+{
+	"info": {
+		"_postman_id": "c9936e14-e3f3-468e-b510-390b19c4abbc",
+		"name": "VOTING APP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49185828",
+		"_collection_link": "https://marlonaguilar1006-7608925.postman.co/workspace/Marlon-Elexie-Aguilar's-Workspa~86f1c7d7-d5e0-4245-8503-4a1fdf21bb66/collection/49185828-c9936e14-e3f3-468e-b510-390b19c4abbc?action=share&source=collection_link&creator=49185828"
+	},
+	"item": [
+		{
+			"name": "admins",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.environment.set(\"JWT_TOKEN\", jsonData.token);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "admin@sdca.edu.ph",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/admin/login",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"admin",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the JSON response\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if login was successful\r",
+									"if (pm.response.code === 200 && jsonData.token) {\r",
+									"    // Save admin token to environment\r",
+									"    pm.environment.set(\"adminToken\", jsonData.token);\r",
+									"    pm.environment.set(\"userRole\", \"admin\");\r",
+									"    console.log(\"Admin token saved as {{adminToken}}\");\r",
+									"} else {\r",
+									"    console.log(\"Admin login failed:\", jsonData.message || \"No token returned\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "fullName",
+									"value": "Admin User",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "admin@sdca.edu.ph",
+									"type": "text"
+								},
+								{
+									"key": "studentID",
+									"value": "0001",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin123",
+									"type": "text"
+								},
+								{
+									"key": "password2",
+									"value": "admin123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/admin/register",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"admin",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "votes",
+			"item": [
+				{
+					"name": "Cast Vote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVkM2E2MWQ4YjQyYTZiNDQ0MDc3YSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjM2Mjg2ODYsImV4cCI6MTc2MzcxNTA4Nn0.UjCAkd0Cpo7KpziNCbG2PBB06ZqUiRJKOGotaXNXfKE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "electionId",
+									"value": "691ed8a086d602ff5b32c485",
+									"type": "text"
+								},
+								{
+									"key": "candidateId",
+									"value": "691ed8db86d602ff5b32c48b",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/votes",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"votes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Realtime Votes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVkM2E2MWQ4YjQyYTZiNDQ0MDc3YSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjM2Mjg2ODYsImV4cCI6MTc2MzcxNTA4Nn0.UjCAkd0Cpo7KpziNCbG2PBB06ZqUiRJKOGotaXNXfKE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "electionId",
+									"value": "691ed8a086d602ff5b32c485",
+									"type": "text"
+								},
+								{
+									"key": "candidateId",
+									"value": "691ed8db86d602ff5b32c48b",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/votes/691ed8a086d602ff5b32c485/realtime",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"votes",
+								"691ed8a086d602ff5b32c485",
+								"realtime"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Election Summary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVkM2E2MWQ4YjQyYTZiNDQ0MDc3YSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjM2Mjg2ODYsImV4cCI6MTc2MzcxNTA4Nn0.UjCAkd0Cpo7KpziNCbG2PBB06ZqUiRJKOGotaXNXfKE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "electionId",
+									"value": "691ed8a086d602ff5b32c485",
+									"type": "text"
+								},
+								{
+									"key": "candidateId",
+									"value": "691ed8db86d602ff5b32c48b",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/votes/691ed8a086d602ff5b32c485/summary",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"votes",
+								"691ed8a086d602ff5b32c485",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "candidates",
+			"item": [
+				{
+					"name": "Add Candidate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYyMjQ4MywiZXhwIjoxNzYzNzA4ODgzfQ.9Fw5zlMmcULH1PnGJgu4nC_tFA04nuu9-TFTh1XIjcc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullName",
+									"value": "Marcos",
+									"type": "text"
+								},
+								{
+									"key": "position",
+									"value": "President",
+									"type": "text"
+								},
+								{
+									"key": "motto",
+									"value": "para daw sa lahat",
+									"type": "text"
+								},
+								{
+									"key": "imageUrl",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/marcos.jpg"
+								},
+								{
+									"key": "electionId",
+									"value": "691ebeb4f30210ba6f17806b",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/candidates",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"candidates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Candidate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYyMjQ4MywiZXhwIjoxNzYzNzA4ODgzfQ.9Fw5zlMmcULH1PnGJgu4nC_tFA04nuu9-TFTh1XIjcc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/candidates/691ecbdddaf7fd675f339f0f",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"candidates",
+								"691ecbdddaf7fd675f339f0f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Candidate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYyMjQ4MywiZXhwIjoxNzYzNzA4ODgzfQ.9Fw5zlMmcULH1PnGJgu4nC_tFA04nuu9-TFTh1XIjcc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "sdca student council election",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Election for school council",
+									"type": "text"
+								},
+								{
+									"key": "startDate",
+									"value": "2025-12-01T08:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-12-05T17:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "bannerURL",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/sdca logo.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/candidates/691ed63186d602ff5b32c468",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"candidates",
+								"691ed63186d602ff5b32c468"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Candidate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYyMjQ4MywiZXhwIjoxNzYzNzA4ODgzfQ.9Fw5zlMmcULH1PnGJgu4nC_tFA04nuu9-TFTh1XIjcc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullName",
+									"value": "Marcos Updated",
+									"type": "text"
+								},
+								{
+									"key": "position",
+									"value": "Philippiens President",
+									"type": "text"
+								},
+								{
+									"key": "motto",
+									"value": "updated motto",
+									"type": "text"
+								},
+								{
+									"key": "imageUrl",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/marcos.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/candidates/691ecbdddaf7fd675f339f0f",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"candidates",
+								"691ecbdddaf7fd675f339f0f"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "voters",
+			"item": [
+				{
+					"name": "Register Voter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the JSON response\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if login was successful\r",
+									"if (pm.response.code === 200 && jsonData.token) {\r",
+									"    // Save voter token to environment\r",
+									"    pm.environment.set(\"authToken\", jsonData.token);\r",
+									"    pm.environment.set(\"userRole\", \"voter\");\r",
+									"    console.log(\"Voter token saved as {{authToken}}\");\r",
+									"} else {\r",
+									"    console.log(\"Voter login failed:\", jsonData.message || \"No token returned\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "fullName",
+									"value": "marlon aguilar",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "marlonaguilar1006@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "password2",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/voters/register?fullName=Marlon Aguilar&email=marlonaguilar1006@gmail,com&studentID&password=123456&password2=123456",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"voters",
+								"register"
+							],
+							"query": [
+								{
+									"key": "fullName",
+									"value": "Marlon Aguilar"
+								},
+								{
+									"key": "email",
+									"value": "marlonaguilar1006@gmail,com"
+								},
+								{
+									"key": "studentID",
+									"value": null
+								},
+								{
+									"key": "password",
+									"value": "123456"
+								},
+								{
+									"key": "password2",
+									"value": "123456"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Voter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"pm.environment.set(\"JWT_TOKEN\", jsonData.token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "secret",
+									"value": "SDCA2025Elections",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "payload",
+									"value": "{}",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								},
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "marlonaguilar1006@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/voters/login",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"voters",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Voter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWQ3MGNiYmU4OGFhM2I1NGM2Yjg3MyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjM2MjE0ODgsImV4cCI6MTc2MzcwNzg4OH0.fip6jCRGlahzWt1hWt_Mzddk7rXVfu-bRwwJhjwO3gg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/voters/691d70cbbe88aa3b54c6b873",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"voters",
+								"691d70cbbe88aa3b54c6b873"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Voter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjEwNjZhYjYxY2I5MjMyMjRkNjlkNCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2Mzc3MjAxNiwiZXhwIjoxNzYzODU4NDE2fQ.WVhFuwFM9vcIYSArS5bgnWBUhwUuBIPZRSythWrOMfo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "fulName",
+									"value": "Marlon Elexie Aguilar",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/voters/692063aa5a543c0eda85f699",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"voters",
+								"692063aa5a543c0eda85f699"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Voter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWQ3MGNiYmU4OGFhM2I1NGM2Yjg3MyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjM2MjE0ODgsImV4cCI6MTc2MzcwNzg4OH0.fip6jCRGlahzWt1hWt_Mzddk7rXVfu-bRwwJhjwO3gg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "fulName",
+									"value": "Marlon Elexie Aguilar",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/voters/691d70cbbe88aa3b54c6b873",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"voters",
+								"691d70cbbe88aa3b54c6b873"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "elections",
+			"item": [
+				{
+					"name": "Create Election",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save JWT token to environment variables for Postman\r",
+									"if (pm.response.code === 200) {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    // If logging in as admin (check email)\r",
+									"    if (jsonData.voter?.email === \"admin@sdca.edu.ph\") {\r",
+									"        pm.environment.set(\"adminToken\", jsonData.token);\r",
+									"    } else {\r",
+									"        // Regular voter\r",
+									"        pm.environment.set(\"token\", jsonData.token);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYxOTEwNCwiZXhwIjoxNzYzNzA1NTA0fQ.xwhuFjzCpCkYpbahxIv1BT0euOkQQuATiknLch2ttBQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "vote testing",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Election for school council 2025",
+									"type": "text"
+								},
+								{
+									"key": "startDate",
+									"value": "2025-11-20T08:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-11-30T17:00:00.000",
+									"type": "text"
+								},
+								{
+									"key": "banner",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/sdca logo.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/elections",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"elections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Election",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYxOTEwNCwiZXhwIjoxNzYzNzA1NTA0fQ.xwhuFjzCpCkYpbahxIv1BT0euOkQQuATiknLch2ttBQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/elections",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"elections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Election",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYxOTEwNCwiZXhwIjoxNzYzNzA1NTA0fQ.xwhuFjzCpCkYpbahxIv1BT0euOkQQuATiknLch2ttBQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/elections/691eb15a064e58be75ad413a",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"elections",
+								"691eb15a064e58be75ad413a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Election",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYxOTEwNCwiZXhwIjoxNzYzNzA1NTA0fQ.xwhuFjzCpCkYpbahxIv1BT0euOkQQuATiknLch2ttBQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "updated title SDCA",
+									"type": "text"
+								},
+								{
+									"key": "banner",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/sdca b.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/elections/691eb15a064e58be75ad413a",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"elections",
+								"691eb15a064e58be75ad413a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Election",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYxOTEwNCwiZXhwIjoxNzYzNzA1NTA0fQ.xwhuFjzCpCkYpbahxIv1BT0euOkQQuATiknLch2ttBQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/elections/691eb15a064e58be75ad413a",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"elections",
+								"691eb15a064e58be75ad413a"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "eligiblevoters",
+			"item": [
+				{
+					"name": "Upload Eligible Voters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYyODQ3MywiZXhwIjoxNzYzNzE0ODczfQ.Gz4Dg5LA8wcdiSBy-Qqdt5H567Jq2zE2pAkrpyMRSqw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/SDCA SMART VOTING/eligible-voters-sample.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/upload/eligible-voters",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"upload",
+								"eligible-voters"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "result",
+			"item": [
+				{
+					"name": "Get Single Election Result",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVkM2E2MWQ4YjQyYTZiNDQ0MDc3YSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjM2Mjg2ODYsImV4cCI6MTc2MzcxNTA4Nn0.UjCAkd0Cpo7KpziNCbG2PBB06ZqUiRJKOGotaXNXfKE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "electionId",
+									"value": "691ed8a086d602ff5b32c485",
+									"type": "text"
+								},
+								{
+									"key": "candidateId",
+									"value": "691ed8db86d602ff5b32c48b",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/results/691ed8a086d602ff5b32c485",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"results",
+								"691ed8a086d602ff5b32c485"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Election Result",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MWVhNzM1NzFlN2E4NmU1MjNjNWQ4MCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc2MzYyODQ3MywiZXhwIjoxNzYzNzE0ODczfQ.Gz4Dg5LA8wcdiSBy-Qqdt5H567Jq2zE2pAkrpyMRSqw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/results",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"results"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Partylist",
+			"item": [
+				{
+					"name": "Create Partylist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Student Unity",
+									"type": "text"
+								},
+								{
+									"key": "about",
+									"value": "Unity upfront Enemy at the back",
+									"type": "text"
+								},
+								{
+									"key": "electionId",
+									"value": "692106f24467bd1a51fd841f",
+									"type": "text"
+								},
+								{
+									"key": "banner",
+									"type": "file",
+									"src": "/C:/Users/HP/Desktop/sdca b.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VOTING_URL}}/partylist/create",
+							"host": [
+								"{{VOTING_URL}}"
+							],
+							"path": [
+								"partylist",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

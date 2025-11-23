@@ -10,9 +10,9 @@ exports.addCandidate = async (req, res, next) => {
     console.log("🔥 BODY:", req.body);
     console.log("🔥 FILE:", req.file);
 
-    const { fullName, position, electionId, motto } = req.body;
+    const { firstName, lastName, position, electionId, motto } = req.body;
 
-    if (!fullName || !position || !electionId) {
+    if (!firstName || !lastName || !position || !electionId) {
       return next(new HttpError("Missing required fields", 422));
     }
 
@@ -40,7 +40,8 @@ exports.addCandidate = async (req, res, next) => {
     }
 
     const data = {
-      fullName: String(fullName).trim(),
+      firstName: String(firstName).trim(),
+      lastName: String(lastName).trim(),
       position: String(position).trim(),
       electionId,
       motto: motto || "",
@@ -99,13 +100,14 @@ exports.voteCandidate = (req, res, next) => {
 // ================================
 exports.updateCandidate = async (req, res, next) => {
   try {
-    const { fullName, position, motto } = req.body;
+    const { firstName, lastName, position, motto } = req.body;
     const candidate = await Candidate.findById(req.params.id);
 
     if (!candidate) return next(new HttpError("Candidate not found", 404));
 
     // Update basic fields
-    if (fullName) candidate.fullName = String(fullName).trim();
+    if (firstName) candidate.firstName = String(firstName).trim();
+    if (lastName) candidate.lastName = String(lastName).trim();
     if (position) candidate.position = String(position).trim();
     if (motto) candidate.motto = String(motto).trim();
 

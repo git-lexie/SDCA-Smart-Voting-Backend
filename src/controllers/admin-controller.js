@@ -11,17 +11,20 @@ const generateToken = (payload) => {
 // REGISTER ADMIN
 exports.registerAdmin = async (req, res, next) => {
   try {
-    const { fullName, email, password } = req.body;
-    if (!fullName || !email || !password)
+    const { firstName, lastName, email, password } = req.body;
+    if (!firstName || !lastName || !email || !password)
       return next(new HttpError("All fields are required", 422));
 
     const existing = await Admin.findOne({ email: email.toLowerCase() });
     if (existing) return next(new HttpError("Admin already registered", 422));
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const admin = await Admin.create({
-      fullName,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
       email: email.toLowerCase(),
-      password, // pre-save hook hashes it
+      password: hashedPassword,
       isAdmin: true,
     });
 
@@ -40,8 +43,10 @@ exports.loginAdmin = async (req, res, next) => {
     const admin = await Admin.findOne({ email: email.toLowerCase() });
     if (!admin) return next(new HttpError("Admin not found", 404));
 
-    const valid = await admin.matchPassword(password); // use method
-    if (!valid) return next(new HttpError("Incorrect Password", 401));
+    const valid = await admin.matchPassword(password); 
+    if (!valid) 
+      return next(new HttpError("Incorrect Password", 401));
+    
 
     const token = generateToken({ id: admin._id, isAdmin: admin.isAdmin });
     res.json({ message: "Login successful", token, admin });
